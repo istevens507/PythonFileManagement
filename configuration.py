@@ -23,17 +23,8 @@ CONST_CONFIG_FILENAME = f"{CONST_DIRECTORY_LOCATION}/config.json"
 # The jobName is the name of the file that is going to be processed
 # The FileName represents what will use to search for in file
 MainFrameJobs = {
-    "RMIPRV": {"JobName": "RMIPRV", "FileName": "P03T03"},
-    "RMPYPT": {"JobName": "RMPYPT", "FileName": "P03T05"},
-    "TELPJP05": {"JobName": "TELPJP05", "FileName": "P14T01"},
-    "CADJJ35": {"JobName": "CADJJ35", "FileName": "P64T01"},
-    "CPMTJP11": {"JobName": "CPMTJP11", "FileName": "P18T03"},
-    "CPJP10F": {"JobName": "CPJP10F", "FileName": "P03T04"},
-    "CADJJ08L": {"JobName": "CADJJ08L", "FileName": "P08T0212"},
-    "CPMTJP36": {"JobName": "CPMTJP36", "FileName": "P36D01"},
-    "CPMTJ37M": {"JobName": "CPMTJ37M", "FileName": "P37D01"},
+    "T40": {"JobName": "Assessment_T40", "FileName": "T40J003"},
 }
-
 
 class EmailConfiguration:
     """Email Configuration schema"""
@@ -201,3 +192,4 @@ CONST_SOURCE_FOLDER: str = CONST_CONFIG_DATA.SourceFolder
 CONST_DESTINATION_FOLDER: str = CONST_CONFIG_DATA.DestinationFolder
 CONST_DISABLE_REPORT_TEXT_FILE: bool = CONST_CONFIG_DATA.DisableReportTextFile
 CONST_EMAIL_NOTIFICATION: EmailConfiguration = CONST_CONFIG_DATA.EmailNotification
+
