@@ -11,7 +11,6 @@ import pdfCreator
 import configuration
 import sys
 
-
 # File / PDF Creation, deletion, single file,
 class File:
 
@@ -53,7 +52,7 @@ class File:
     def CreatePDF(
         self,
         indexes: dict[str, list[str]],
-        headerLines: list[PdfCreator.HeaderLine] = None,
+        headerLines: list[pdfCreator.HeaderLine] = None,
         leftMargin: int = None,
         readLines: list[str] = None,
         logger: logging.Logger = None,
@@ -69,9 +68,9 @@ class File:
         )
 
         pdfObj = (
-            PdfCreator.PDF(_LeftMargin=leftMargin)
+            pdfCreator.PDF(_LeftMargin=leftMargin)
             if leftMargin is not None
-            else PdfCreator.PDF()
+            else pdfCreator.PDF()
         )
 
         pdfObj.Create(
@@ -112,7 +111,7 @@ def Remove(
         filePath = (
             filename
             if isMetadata
-            else f"{RemittanceConfiguration.CONST_SOURCE_FOLDER}/{filename}"
+            else f"{configuration.CONST_SOURCE_FOLDER}/{filename}"
         )
         os.remove(filePath)
 

@@ -26,30 +26,30 @@ MainFrameJobs = {
     "T40": {"JobName": "Assessment_T40", "FileName": "T40J003"},
 }
 
-class EmailConfiguration:
-    """Email Configuration schema"""
+# class EmailConfiguration:
+#     """Email Configuration schema"""
 
-    def __init__(self, SMTPHost, SMTPPort):
-        self.SMTPHost = SMTPHost
-        self.SMTPPort = SMTPPort
+#     def __init__(self, SMTPHost, SMTPPort):
+#         self.SMTPHost = SMTPHost
+#         self.SMTPPort = SMTPPort
 
 
-class EmailNotification:
-    """Email Notification schema"""
+# class EmailNotification:
+#     """Email Notification schema"""
 
-    def __init__(
-        self,
-        IsEnabled: bool,
-        Sender: str,
-        Recipient: str,
-        Subject: str,
-        Configuration: EmailConfiguration,
-    ):
-        self.IsEnabled = IsEnabled
-        self.Sender = Sender
-        self.Recipient = Recipient
-        self.Subject = Subject
-        self.Configuration = Configuration
+#     def __init__(
+#         self,
+#         IsEnabled: bool,
+#         Sender: str,
+#         Recipient: str,
+#         Subject: str,
+#         Configuration: EmailConfiguration,
+#     ):
+#         self.IsEnabled = IsEnabled
+#         self.Sender = Sender
+#         self.Recipient = Recipient
+#         self.Subject = Subject
+#         self.Configuration = Configuration
 
 
 class MainConfiguration:
@@ -61,13 +61,13 @@ class MainConfiguration:
         SourceFolder: str,
         DestinationFolder: str,
         DisableReportTextFile: bool,
-        EmailNotification: EmailNotification,
+       # EmailNotification: EmailNotification,
     ):
         self.ScriptLogFolder = ScriptLogFolder
         self.SourceFolder = SourceFolder
         self.DestinationFolder = DestinationFolder
         self.DisableReportTextFile = DisableReportTextFile
-        self.EmailNotification = EmailNotification
+        #self.EmailNotification = EmailNotification
 
 
 class Setting:
@@ -85,24 +85,24 @@ class Setting:
         self.DisableReportTextFile = (
             True if self.CONST_CONFIG_DATA["DisableReportTextFile"] == "true" else False
         )
-        self.EmailNotification = EmailNotification(
-            IsEnabled=(
-                True
-                if self.CONST_CONFIG_DATA["EmailNotification"]["IsEnabled"] == "true"
-                else False
-            ),
-            Sender=self.CONST_CONFIG_DATA["EmailNotification"]["Sender"],
-            Recipient=self.CONST_CONFIG_DATA["EmailNotification"]["Recipient"],
-            Subject=self.CONST_CONFIG_DATA["EmailNotification"]["Subject"],
-            Configuration=EmailConfiguration(
-                SMTPHost=self.CONST_CONFIG_DATA["EmailNotification"]["configuration"][
-                    "SMTPHost"
-                ],
-                SMTPPort=self.CONST_CONFIG_DATA["EmailNotification"]["configuration"][
-                    "SMTPPort"
-                ],
-            ),
-        )
+        #self.EmailNotification = EmailNotification(
+        #    IsEnabled=(
+        #        True
+        #        if self.CONST_CONFIG_DATA["EmailNotification"]["IsEnabled"] == "true"
+        #        else False
+        #    ),
+        #    Sender=self.CONST_CONFIG_DATA["EmailNotification"]["Sender"],
+        #    Recipient=self.CONST_CONFIG_DATA["EmailNotification"]["Recipient"],
+        #    Subject=self.CONST_CONFIG_DATA["EmailNotification"]["Subject"],
+        #    Configuration=EmailConfiguration(
+        #        SMTPHost=self.CONST_CONFIG_DATA["EmailNotification"]["configuration"][
+        #            "SMTPHost"
+        #        ],
+        #        SMTPPort=self.CONST_CONFIG_DATA["EmailNotification"]["configuration"][
+        #            "SMTPPort"
+        #        ],
+        #    ),
+        #)
 
         # Return the configuration data
         return MainConfiguration(
@@ -110,7 +110,7 @@ class Setting:
             SourceFolder=self.SourceFolder,
             DestinationFolder=self.DestinationFolder,
             DisableReportTextFile=self.DisableReportTextFile,
-            EmailNotification=self.EmailNotification,
+            #EmailNotification=self.EmailNotification,
         )
 
 
@@ -191,5 +191,5 @@ CONST_SCRIPT_LOG_FOLDER: str = CONST_CONFIG_DATA.ScriptLogFolder
 CONST_SOURCE_FOLDER: str = CONST_CONFIG_DATA.SourceFolder
 CONST_DESTINATION_FOLDER: str = CONST_CONFIG_DATA.DestinationFolder
 CONST_DISABLE_REPORT_TEXT_FILE: bool = CONST_CONFIG_DATA.DisableReportTextFile
-CONST_EMAIL_NOTIFICATION: EmailConfiguration = CONST_CONFIG_DATA.EmailNotification
+#CONST_EMAIL_NOTIFICATION: EmailConfiguration = CONST_CONFIG_DATA.EmailNotification
 

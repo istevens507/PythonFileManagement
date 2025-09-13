@@ -8,9 +8,9 @@
 ### Example: python Assessment_T40.py -fileName 'filename.txt'
 
 import sys
-import File
-import RemittanceDocument
-import RemittanceConfiguration
+import file
+import dataManagement
+import configuration
 import os
 import argparse
 import concurrent.futures
@@ -24,13 +24,13 @@ os.system("cls || clear")
 
 # region Initialize
 
-jobs = RemittanceConfiguration.MainFrameJobs
-documentStatements: list[RemittanceDocument.Document] = [
-    RemittanceDocument.Document(
-        JobName=jobs["CPMTJ37M"]["JobName"],
-        Name=jobs["CPMTJ37M"]["FileName"],
-        Description="MEDICAL SERVICES PLAN OF BRITISH COLUMBIA",
-        Indexes={"Header": ["CPMTP37L01", "MEDICAL SERVICES PLAN"]},
+jobs = configuration.MainFrameJobs
+documentStatements: list[dataManagement.Document] = [
+    dataManagement.Document(
+        JobName=jobs["T40"]["JobName"],
+        Name=jobs["T40"]["FileName"],
+        Description="MEDICAL SERVICES PLAN OF B. COLUMBIA",
+        Indexes={"Header": ["CLAIMT40J003", "MEDICAL SERVICES PLAN"]},
     ),
 ]
 
@@ -50,20 +50,19 @@ logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter("%(asctime)s : %(levelname)s - %(message)s")
 
-scriptsLogDirectoryPath = Path(RemittanceConfiguration.CONST_SCRIPT_LOG_FOLDER)
+scriptsLogDirectoryPath = Path(configuration.CONST_SCRIPT_LOG_FOLDER)
 # Create the ScriptsLog directory if it does not exist
 if not os.path.exists(scriptsLogDirectoryPath):
     os.makedirs(scriptsLogDirectoryPath, exist_ok=True)
 
 file_hander = logging.FileHandler(
-    f"{RemittanceConfiguration.CONST_SCRIPT_LOG_FOLDER}/CPMTJ37_{datetime.today().strftime('%Y-%m-%d_%H-%M-%S')}.log"
+    f"{configuration.CONST_SCRIPT_LOG_FOLDER}/T40_{datetime.today().strftime('%Y-%m-%d_%H-%M-%S')}.log"
 )
 file_hander.setFormatter(formatter)
 
 logger.addHandler(file_hander)
 
 # endregion
-
 
 # region Classes
 class MedicalCareStatement:
@@ -94,7 +93,7 @@ def GetMedicalCareLines(beginIndex: int, endIndex: int, mainSourceReadLines: lis
 
 
 def GetMedicalCareReceivedTapes(
-    file: str, document: RemittanceDocument.Document
+    file: str, document: dataManagement.Document
 ) -> None:
     try:
 
@@ -108,7 +107,7 @@ def GetMedicalCareReceivedTapes(
 
             logger.info(f"Processing file with {numberOfLines} line(s) ...")
 
-            mainDirectory = RemittanceConfiguration.CONST_DESTINATION_FOLDER
+            mainDirectory = configuration.CONST_DESTINATION_FOLDER
             processedClaimJobNameDirectory = f"{mainDirectory}\\{document.JobName}"
 
             # Create main folder
@@ -201,7 +200,7 @@ def MedicalCareStatementFileManagement(
 
     fileObj = File.File(Path=statementJobPath, Name=fileName, Data=readLines)
 
-    disableReportTextFile: bool = RemittanceConfiguration.CONST_DISABLE_REPORT_TEXT_FILE
+    disableReportTextFile: bool = configuration.CONST_DISABLE_REPORT_TEXT_FILE
 
     if not disableReportTextFile:
         fileObj.CreateTextFile(logger=logger)
@@ -213,21 +212,21 @@ def MedicalCareStatementFileManagement(
     )
 
 
-def ProcessFile(file: str, document: RemittanceDocument.Document):
+def ProcessFile(file: str, document: dataManagement.Document):
     if document is not None:
         filenameToRemove = file
 
         currenDate = datetime.now()
 
         medicalCareStatements, readLines = GetMedicalCareReceivedTapes(
-            f"{RemittanceConfiguration.CONST_SOURCE_FOLDER}/{file}",
+            f"{configuration.CONST_SOURCE_FOLDER}/{file}",
             document,
         )
 
         SourceFolder = document.JobName
 
         statementJobPath = (
-            f"{RemittanceConfiguration.CONST_DESTINATION_FOLDER}/{SourceFolder}"
+            f"{configuration.CONST_DESTINATION_FOLDER}/{SourceFolder}"
         )
         # Create the job folder if it does not exist
         File.CreateDirectory(
@@ -286,7 +285,7 @@ def ProcessFile(file: str, document: RemittanceDocument.Document):
 def GetStatements(directory):
     try:
 
-        performance = RemittanceConfiguration.Performance()
+        performance = configuration.Performance()
         files = os.listdir(directory)
         for file in files:
             filename, extension = os.path.splitext(file)
@@ -310,7 +309,7 @@ def GetStatements(directory):
 
 # region - Script Execution
 
-directory_path = f"{RemittanceConfiguration.CONST_SOURCE_FOLDER}"
+directory_path = f"{configuration.CONST_SOURCE_FOLDER}"
 
 start = time.perf_counter()
 
@@ -321,5 +320,5 @@ else:
     ProcessFile(jobFileName, document)
 
 finish = time.perf_counter()
-logger.info(RemittanceConfiguration.ElapseTime.GetElapseTime(finish - start))
+logger.info(configuration.ElapseTime.GetElapseTime(finish - start))
 # endregion
