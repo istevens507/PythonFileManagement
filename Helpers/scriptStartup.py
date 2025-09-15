@@ -174,8 +174,16 @@ async def CallProcess(
     strBuilder.Add(f"==> {scriptCall} -fileName '{jobFile}'")
     startTime = getDateFormat()
 
+    # Create a copy of the current environment
+    environment = os.environ.copy()
+
+    timeoutSeconds = 5
+
+    # capture_output=True and text=True --> These are used to capture the standard output of the subprocess as a string for printing. 
+    # timeout --> with the option to set a timeout. If the subprocess exceeds the specified timeout in seconds, a subprocess.TimeoutExpired exception is raised, and the child process is
+
     process = subprocess.run(
-        ["python", scriptCall, "-fileName", jobFile], capture_output=True, text=True
+        ["py", scriptCall, "-fileName", jobFile], env=environment, capture_output=True, text=True, timeout=timeoutSeconds
     )
     finishTime = getDateFormat()
 
