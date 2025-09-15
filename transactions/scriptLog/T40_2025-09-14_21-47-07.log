@@ -1,0 +1,7 @@
+2025-09-14 21:47:07,642 : INFO - Attempting to open/read file
+2025-09-14 21:47:07,643 : ERROR - Error Type: <class 'OSError'> - [Errno 22] Invalid argument: 'C:\\Users\\istevens\\source\repos\\PYTHON SCRIPTS\\PythonFileManagement\\transactions\\data\\temp/CLAIMASSESSMENT.T40J003.20250913.txt'
+Traceback (most recent call last):
+  File "C:\Users\istevens\source\repos\PYTHON SCRIPTS\PythonFileManagement\BusinessJobs\Assessment_T40.py", line 95, in GetMedicalCareReceivedTapes
+    with open(file, "r", encoding="utf-8", errors="ignore") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 22] Invalid argument: 'C:\\Users\\istevens\\source\repos\\PYTHON SCRIPTS\\PythonFileManagement\\transactions\\data\\temp/CLAIMASSESSMENT.T40J003.20250913.txt'

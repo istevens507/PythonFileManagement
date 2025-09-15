@@ -1,0 +1,8 @@
+2025-09-14 22:02:16,340 : INFO - Attempting to open/read file
+2025-09-14 22:02:20,027 : INFO - Processing file with 105 line(s) ...
+2025-09-14 22:02:20,071 : INFO - Created file: C:\Users\istevens\source\repos\PYTHON SCRIPTS\PythonFileManagement\transactions\data\data\Assessment_T40//2025//September/NEWFOUNDLAND_2025-09-14_22-02-20.pdf
+2025-09-14 22:02:20,071 : INFO - Created file: C:\Users\istevens\source\repos\PYTHON SCRIPTS\PythonFileManagement\transactions\data\data\Assessment_T40//2025//September/ALBERTA_2025-09-14_22-02-20.pdf
+2025-09-14 22:02:20,074 : INFO - Created file: C:\Users\istevens\source\repos\PYTHON SCRIPTS\PythonFileManagement\transactions\data\data\Assessment_T40//2025//September/ONTARIO_2025-09-14_22-02-20.pdf
+2025-09-14 22:02:20,074 : INFO - Created file: C:\Users\istevens\source\repos\PYTHON SCRIPTS\PythonFileManagement\transactions\data\data\Assessment_T40//2025//September/MANITOBA_2025-09-14_22-02-20.pdf
+2025-09-14 22:02:20,072 : INFO - Created file: C:\Users\istevens\source\repos\PYTHON SCRIPTS\PythonFileManagement\transactions\data\data\Assessment_T40//2025//September/NEW BRUNSWICK_2025-09-14_22-02-20.pdf
+2025-09-14 22:02:20,078 : INFO - Created file: C:\Users\istevens\source\repos\PYTHON SCRIPTS\PythonFileManagement\transactions\data\data\Assessment_T40//2025//September/SASKATCHEWAN_2025-09-14_22-02-20.pdf

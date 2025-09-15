@@ -1,0 +1,5 @@
+2025-09-14 21:59:32,258 : INFO - Attempting to open/read file
+2025-09-14 21:59:35,654 : INFO - Processing file with 105 line(s) ...
+2025-09-14 21:59:35,656 : INFO - Created directory: C:\Users\istevens\source\repos\PYTHON SCRIPTS\PythonFileManagement\transactions\data\data\Assessment_T40
+2025-09-14 21:59:35,658 : INFO - Created directory: C:\Users\istevens\source\repos\PYTHON SCRIPTS\PythonFileManagement\transactions\data\data\Assessment_T40/2025
+2025-09-14 21:59:35,659 : INFO - Created directory: C:\Users\istevens\source\repos\PYTHON SCRIPTS\PythonFileManagement\transactions\data\data\Assessment_T40//2025/September
