@@ -2,3 +2,5 @@ __pycache__/
 *.py[cod]
 *$py.class
 Helpers/__pycache__
+Transactions/data/data
+Transactions/data/temp

@@ -236,8 +236,8 @@ def ProcessFile(filePath: str, document: dataManagement.Document):
                     if result is not None:
                         print(f.result())
         # Remove file
-        fileManagement.Remove(filenameToRemove)
-        logger.info(f"File to Remove: {filenameToRemove}")
+        #fileManagement.Remove(filenameToRemove)
+        #logger.info(f"File to Remove: {filenameToRemove}")
         os.system("cls || clear")
         print(
             f"=== DONE === For more details see log file '{file_hander.baseFilename}'"
