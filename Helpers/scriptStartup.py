@@ -3,19 +3,12 @@
 #######################################################################################
 ### Purpose: This script in charge of execute all the scripts that are required to process the remittance files.
 ###
-### Usage: python ScriptRunner.py -scriptPath '<directory of where python scripts are located>'
+### Usage: python ScriptStartup.py -scriptPath '<directory of where python scripts are located>'
 ###
-### Author : Isaac Stevens (isaac.stevens@pbcsolutions.ca)
-### Date   : February 11, 2025
-#######################################################################################
-### CHANGE LOG (Date: Name: Change):
-#######################################################################################
-### 2025-02-11: Isaac Stevens: Initial release
-### 2025-04-16: Isaac Stevens: New module "tabulate" added to display the summary of the files found in a table format
 
 import os
 import subprocess
-import RemittanceConfiguration
+import configuration
 from io import StringIO
 import datetime
 import argparse
@@ -42,15 +35,7 @@ jobSummaries = []
 jobSummariesCompleted = []
 
 CONST_JOBS = [
-    {"jobName": "P03T03", "scriptName": "RMIPRV"},
-    {"jobName": "P03T04", "scriptName": "CPJP10F"},
-    {"jobName": "P03T05", "scriptName": "RMPYPT"},
-    {"jobName": "P14T01", "scriptName": "TELPJP05"},
-    {"jobName": "P18T03", "scriptName": "CPMTJP11"},
-    {"jobName": "P08T0212", "scriptName": "CADJJ08L"},
-    {"jobName": "P64T01", "scriptName": "CADJJ35"},
-    {"jobName": "P36D01", "scriptName": "CPMTJP36"},
-    {"jobName": "P37D01", "scriptName": "CPMTJ37M"},
+    {"jobName": "T40J003", "scriptName": "Assessment_T40"},
 ]
 
 
@@ -73,7 +58,7 @@ class StringBuilder:
 
 
 async def main():
-    directory_path = f"{RemittanceConfiguration.CONST_SOURCE_FOLDER}"
+    directory_path = f"{configuration.CONST_SOURCE_FOLDER}"
     files = os.listdir(directory_path)
 
     numberFilesFound = len(files)
@@ -155,29 +140,29 @@ async def main():
         )
 
         # Send email notification if enabled
-        if RemittanceConfiguration.CONST_EMAIL_NOTIFICATION.IsEnabled:
-            notificationScriptPath = "notifications/notification.py"
-            scriptCall = (
-                f"{scriptPath}/{notificationScriptPath}"
-                if scriptPath is not None
-                else notificationScriptPath
-            )
+        #if RemittanceConfiguration.CONST_EMAIL_NOTIFICATION.IsEnabled:
+        #    notificationScriptPath = "notifications/notification.py"
+        #    scriptCall = (
+        #        f"{scriptPath}/{notificationScriptPath}"
+        #        if scriptPath is not None
+        #        else notificationScriptPath
+        #    )
 
-            print(f"\n==> Sending email notification...")
+        #    print(f"\n==> Sending email notification...")
 
-            json_string = json.dumps(jobSummariesCompleted)
+        #    json_string = json.dumps(jobSummariesCompleted)
 
-            process = subprocess.run(
-                ["python", scriptCall, "-list", json_string],
-                capture_output=True,
-                text=True,
-            )
+        #    process = subprocess.run(
+        #        ["python", scriptCall, "-list", json_string],
+        #        capture_output=True,
+        #        text=True,
+        #    )
 
-            if process.returncode == 0:  # Process completed successfully
-                print(f"==> stdout: {process.stdout}")
-            else:
-                if process.stderr:
-                    print(f"==> stderr: {process.stderr}")
+        #    if process.returncode == 0:  # Process completed successfully
+        #        print(f"==> stdout: {process.stdout}")
+        #    else:
+        #        if process.stderr:
+        #            print(f"==> stderr: {process.stderr}")
 
 
 async def CallProcess(
