@@ -32,10 +32,11 @@ os.system("cls || clear")
 # region Initialize
 
 jobs = configuration.MainFrameJobs
+
 documentStatements: list[dataManagement.Document] = [
     dataManagement.Document(
-        JobName=jobs["T40"]["JobName"],
-        Name=jobs["T40"]["FileName"],
+        JobName= jobs["T40"]["JobName"],
+        Name= jobs["T40"]["FileName"],
         Description="MEDICAL SERVICES PLAN OF B. COLUMBIA",
         Indexes={"Header": ["CLAIMT40J003", "MEDICAL SERVICES PLAN"]},
     ),
