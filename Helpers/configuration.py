@@ -10,12 +10,14 @@ import os
 import time
 import math
 from datetime import timedelta
+from pathlib import Path
 
 # The following refers
 # temp --> this folder is refers as to where the source files are going to be dropped
 # data --> this folder is where the processed files are going to be stored
 
 CONST_DIRECTORY_LOCATION = os.path.dirname(os.path.abspath(__file__))
+CONST_PROJECT_DIRECTORY_LOCATION = str(Path(CONST_DIRECTORY_LOCATION).parent)
 
 CONST_CONFIG_FILENAME = f"{CONST_DIRECTORY_LOCATION}/config.json"
 
@@ -64,6 +66,7 @@ class MainConfiguration:
         DisableReportTextFile: bool,
        # EmailNotification: EmailNotification,
     ):
+        
         self.ScriptLog = ScriptLog
         self.Source = Source
         self.Destination = Destination
@@ -80,12 +83,14 @@ class Setting:
 
     def getConfiguration(self) -> MainConfiguration:
         """Get the configuration data"""
-        self.ScriptLog = self.CONST_CONFIG_DATA["ScriptLog"]
-        self.Source = self.CONST_CONFIG_DATA["Source"]
-        self.Destination = self.CONST_CONFIG_DATA["Destination"]
+
+        self.ScriptLog = CONST_PROJECT_DIRECTORY_LOCATION + self.CONST_CONFIG_DATA["ScriptLog"]  
+        self.Source = CONST_PROJECT_DIRECTORY_LOCATION + self.CONST_CONFIG_DATA["Source"]
+        self.Destination = CONST_PROJECT_DIRECTORY_LOCATION + self.CONST_CONFIG_DATA["Destination"]
         self.DisableReportTextFile = (
             True if self.CONST_CONFIG_DATA["DisableReportTextFile"] == "true" else False
         )
+
         #self.EmailNotification = EmailNotification(
         #    IsEnabled=(
         #        True
@@ -193,4 +198,5 @@ CONST_SOURCE_FOLDER: str = CONST_CONFIG_DATA.Source
 CONST_DESTINATION_FOLDER: str = CONST_CONFIG_DATA.Destination
 CONST_DISABLE_REPORT_TEXT_FILE: bool = CONST_CONFIG_DATA.DisableReportTextFile
 #CONST_EMAIL_NOTIFICATION: EmailConfiguration = CONST_CONFIG_DATA.EmailNotification
+
 
