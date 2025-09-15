@@ -16,10 +16,12 @@ from pathlib import Path
 # temp --> this folder is refers as to where the source files are going to be dropped
 # data --> this folder is where the processed files are going to be stored
 
+#__file__ is a special built-in variable that holds the pathname of the file from which the module was loaded. 
+# Get the directory containing the current script
 CONST_DIRECTORY_LOCATION = os.path.dirname(os.path.abspath(__file__))
 CONST_PROJECT_DIRECTORY_LOCATION = str(Path(CONST_DIRECTORY_LOCATION).parent)
 
-CONST_CONFIG_FILENAME = f"{CONST_DIRECTORY_LOCATION}/config.json"
+CONST_CONFIG_FILENAME = f"{CONST_PROJECT_DIRECTORY_LOCATION}/config.json"
 
 # The following refers to the jobs that are going to be processed
 # The jobName is the name of the file that is going to be processed
