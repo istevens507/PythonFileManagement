@@ -1,163 +1,224 @@
 #######################################################################################
-### pdfCreator.py
+### scriptStartup.py
 #######################################################################################
-### Purpose: Creates a pdf file
+### Purpose: This script in charge of execute all the scripts that are required to process the remittance files.
 ###
-### Description :
-###                - Page Styling
-###                - Page Alignment
-###                - Page separation → meaning some scripts will require that the document is
-###                  created by grouping data or separate data every time there a header found on the document.
-###                - Once the script finishes it prints (console) the path location of that newly created document.
+### Usage: python ScriptRunner.py -scriptPath '<directory of where python scripts are located>'
 ###
-### Usage: import pdfCreator
+### Author : Isaac Stevens (isaac.stevens@pbcsolutions.ca)
+### Date   : February 11, 2025
+#######################################################################################
+### CHANGE LOG (Date: Name: Change):
+#######################################################################################
+### 2025-02-11: Isaac Stevens: Initial release
+### 2025-04-16: Isaac Stevens: New module "tabulate" added to display the summary of the files found in a table format
 
-from logging import Logger
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
 import os
+import subprocess
+import RemittanceConfiguration
+from io import StringIO
+import datetime
+import argparse
+import asyncio
+import json
+
+# Pretty-print tabular data
+from tabulate import tabulate
 
 # Clearing the Screen
 os.system("cls || clear")
 
-class HeaderLine:
-    def __init__(self, HeaderKey: str, LinesPerHeader: int, Value: str):
-        self.HeaderKey = HeaderKey
-        self.LinesPerHeader = LinesPerHeader
-        self.Value = Value
+ap = argparse.ArgumentParser()
 
-class PDF:
-    def __init__(self, _LeftMargin=8):
+ap.add_argument("-scriptPath", "--foperand", required=False, help="first operand")
 
-        self._TextLineContinuationIndex = 0
-        self._TextLineFont = "Courier"
-        self._TextLineFontSize = 7.5
-        self._TopMargin = 10
-        self._LeftMargin = _LeftMargin
-        self._PageOrientation = letter
-        self._PageSize: tuple[float, float] = (650.0, 792.0)
-        self._IsNextPage = False
-        self._IsSearchNextPage = True
-        self.RemittanceHeaders = list[
-            HeaderLine
-        ]  # provided by whoever consumes the class
-        self.HeaderLines = []
-        self.HeaderFoundIncrement = 0
-        self.TextLineIncrement = 1
-        self.AllowedLinesPerPage = 85
+args = vars(ap.parse_args())
 
-    def _AddTextLine(self, readLines: list[str], text: canvas.PDFTextObject):
+scriptPath = (
+    (args["foperand"]).replace("'", "") if args["foperand"] is not None else None
+)
 
-        pageHeaders: list[HeaderLine] = []
-        startRange = self._TextLineContinuationIndex
-        lines = len(readLines)
+jobSummaries = []
+jobSummariesCompleted = []
 
-        for rangeIndex in range(startRange, lines):
+CONST_JOBS = [
+    {"jobName": "P03T03", "scriptName": "RMIPRV"},
+    {"jobName": "P03T04", "scriptName": "CPJP10F"},
+    {"jobName": "P03T05", "scriptName": "RMPYPT"},
+    {"jobName": "P14T01", "scriptName": "TELPJP05"},
+    {"jobName": "P18T03", "scriptName": "CPMTJP11"},
+    {"jobName": "P08T0212", "scriptName": "CADJJ08L"},
+    {"jobName": "P64T01", "scriptName": "CADJJ35"},
+    {"jobName": "P36D01", "scriptName": "CPMTJP36"},
+    {"jobName": "P37D01", "scriptName": "CPMTJ37M"},
+]
 
-            self._TextLineContinuationIndex = rangeIndex
 
-            if (
-                self.IsRemittanceHeader(readLine=readLines[rangeIndex])
-                and self._IsSearchNextPage
-            ):
+def getDateFormat() -> str:
+    x = datetime.datetime.now()
+    return f'{x.strftime("%Y-%m-%d")} {x.strftime("%X")}'
 
-                if self.HeaderLines is not None and len(self.HeaderLines) > 0:
-                    # fit at much header + content within a page
 
-                    header = self.HeaderLines[self.HeaderFoundIncrement]
+class StringBuilder:
+    string = None
 
-                    pageHeaders.append(header)
+    def __init__(self):
+        self.string = StringIO()
 
-                    potentialContentLines = sum(
-                        int(i.LinesPerHeader) for i in pageHeaders
+    def Add(self, str):
+        self.string.write(f"\n{str}")
+
+    def __str__(self):
+        return self.string.getvalue()
+
+
+async def main():
+    directory_path = f"{RemittanceConfiguration.CONST_SOURCE_FOLDER}"
+    files = os.listdir(directory_path)
+
+    numberFilesFound = len(files)
+    string_builder = StringBuilder()
+
+    string_builder.Add(f"--> === SUMMARY ===")
+    string_builder.Add(
+        f"--> ({numberFilesFound}) file(s) found in - '{directory_path}'"
+    )
+
+    if numberFilesFound > 0:
+
+        for jobObject in CONST_JOBS:
+
+            jobFiles = list(filter(lambda x: (jobObject["jobName"] in x), files))
+
+            if jobFiles is not None:
+                numberOfJobFiles = len(jobFiles)
+                if numberOfJobFiles > 0:
+
+                    jobSummaries.append(
+                        [
+                            jobObject["jobName"],
+                            numberOfJobFiles,
+                        ]
                     )
 
-                    self._IsSearchNextPage = True
+                for jobFile in jobFiles:
 
-                    if potentialContentLines < self.AllowedLinesPerPage:
+                    scriptCall = (
+                        f"{scriptPath}\\{jobObject['scriptName']}.py"
+                        if scriptPath is not None
+                        else f"{jobObject['scriptName']}.py"
+                    )
 
-                        text.textLine(readLines[rangeIndex].rstrip())
-                    else:
-                        pageHeaders = []
-                        self._IsNextPage = True
-                        self.TextLineIncrement = 0
-                        break
-                else:
+                    # Get the date modified of the file
+                    dateModified = datetime.datetime.fromtimestamp(
+                        os.path.getmtime(f"{directory_path}\\{jobFile}")
+                    )
+                    
+                    await CallProcess(
+                        scriptCall=scriptCall,
+                        scriptName=jobObject["scriptName"],
+                        jobFile=jobFile,
+                        dateModified=f'{dateModified.strftime("%Y-%m-%d")} {dateModified.strftime("%X")}',
+                    )
+    print(string_builder)
 
-                    if rangeIndex != 0:
+    if len(jobSummaries) > 0:
+        # Generate table
+        jobSummaryHeaders = ["Job Name", "Number of Files"]
+        print(
+            tabulate(
+                jobSummaries,
+                headers=jobSummaryHeaders,
+                tablefmt="grid",
+                numalign="center",
+                stralign="center",
+            )
+        )
 
-                        self._IsNextPage = True
-                        self._IsSearchNextPage = False
-                        self.TextLineIncrement = 0
-                        break
-                    else:
-                        text.textLine(readLines[rangeIndex].rstrip())
+    if len(jobSummariesCompleted) > 0:
+        print(f"\n--> === PROCCESSED JOBS SUMMARY ===")
+        # Generate table
+        jobSummaryCompletedHeaders = [
+            "Script Name",
+            "Filename",
+            "Completed",
+            "Date Modified",
+        ]
+        print(
+            tabulate(
+                tabular_data=jobSummariesCompleted,
+                headers=jobSummaryCompletedHeaders,
+                tablefmt="grid",
+                numalign="center",
+                stralign="center",
+            )
+        )
 
-                self.HeaderFoundIncrement += 1
+        # Send email notification if enabled
+        if RemittanceConfiguration.CONST_EMAIL_NOTIFICATION.IsEnabled:
+            notificationScriptPath = "notifications/notification.py"
+            scriptCall = (
+                f"{scriptPath}/{notificationScriptPath}"
+                if scriptPath is not None
+                else notificationScriptPath
+            )
+
+            print(f"\n==> Sending email notification...")
+
+            json_string = json.dumps(jobSummariesCompleted)
+
+            process = subprocess.run(
+                ["python", scriptCall, "-list", json_string],
+                capture_output=True,
+                text=True,
+            )
+
+            if process.returncode == 0:  # Process completed successfully
+                print(f"==> stdout: {process.stdout}")
             else:
-                self._IsSearchNextPage = True
-                text.textLine(readLines[rangeIndex].rstrip())
+                if process.stderr:
+                    print(f"==> stderr: {process.stderr}")
 
-            self.TextLineIncrement += 1
 
-    def IsRemittanceHeader(self, readLine: str):
+async def CallProcess(
+    scriptCall: str, scriptName: str, jobFile: str, dateModified: str
+):
+    strBuilder = StringBuilder()
 
-        for header in self.RemittanceHeaders:
-            if not (header.lower() in readLine.lower()):
-                return False
+    strBuilder.Add(f"==> Script '{scriptName}.py' details:")
+    strBuilder.Add(f"==> {scriptCall} -fileName '{jobFile}'")
+    startTime = getDateFormat()
 
-        return True
+    process = subprocess.run(
+        ["python", scriptCall, "-fileName", jobFile], capture_output=True, text=True
+    )
+    finishTime = getDateFormat()
 
-    def _AddNewPage(self, canvasObj: canvas.Canvas):
-        """
-        Close the current page and possibly start on a new page.
-        """
-        canvasObj.showPage()
+    strBuilder.Add(f"==> Started on {startTime} | Finished on {finishTime}")
+    if process.returncode == 0:  # Process completed successfully
+        strBuilder.Add(f"==> stdout: {process.stdout}")
+    else:
+        strBuilder.Add(
+            f"==> { 'stderr: ' + process.stderr if process.stderr else 'stdout: ' + process.stdout}"
+        )
 
-    def _DrawText(self, canvasObj: canvas.Canvas, textObj: canvas.PDFTextObject):
-        """
-        Draw a text object
-        """
-        canvasObj.drawText(textObj)
+    jobSummariesCompleted.append(
+        [
+            scriptName,
+            jobFile,
+            (True if process.returncode == 0 else False),
+            dateModified,
+        ]
+    )
 
-    def Create(
-        self,
-        filePath: str,
-        indexes: dict[str, list[str]],
-        headerLines: list[HeaderLine] = None,
-        readLines: list[str] = None,
-        logger: Logger = None     
-    ):
-        """
-        Creates a PDF file.
-        """
-        try:
+    print(strBuilder)
 
-            self.RemittanceHeaders = indexes
-            self.HeaderLines = headerLines
 
-            w, h = self._PageOrientation
+# Call the async function without await
+main_coroutine = main()
 
-            canvasFilePath = f"{filePath}"
+# Run the coroutine in an event loop
+# The event loop is the core of the asynchronous system in Python. It runs coroutines,
+# handles I/O operations, and manages the execution of tasks. You can start the event loop using
+asyncio.run(main_coroutine)
 
-            canvasObj = canvas.Canvas(canvasFilePath, pagesize=self._PageSize)
-            readLinesLength = len(readLines)
-
-            while self._TextLineContinuationIndex < readLinesLength - 1:
-                self._IsNextPage = False
-                pdfTextObject = canvasObj.beginText(
-                    self._LeftMargin, h - self._TopMargin
-                )
-                pdfTextObject.setFont(self._TextLineFont, self._TextLineFontSize)
-
-                self._AddTextLine(readLines, pdfTextObject)
-                self._DrawText(canvasObj, pdfTextObject)
-
-                if self._IsNextPage:
-                    self._AddNewPage(canvasObj)
-            canvasObj.save()  # method stores the file and closes the canvas.
-            
-            if logger is not None:
-                logger.info(f"Created file: {canvasFilePath}")
-        except Exception as e:
-            print(f"Error type:  {type (e)} - {e}")
