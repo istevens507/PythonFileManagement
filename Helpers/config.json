@@ -1,6 +1,6 @@
 {
-    "ScriptLog": "C:\\Users\\istevens\\source\\repos\\PYTHON SCRIPTS\\PythonFileManagement\\transactions\\scriptLog",
-    "Source": "C:\\Users\\istevens\\source\\repos\\PYTHON SCRIPTS\\PythonFileManagement\\transactions\\data\\temp",
-    "Destination": "C:\\Users\\istevens\\source\\repos\\PYTHON SCRIPTS\\PythonFileManagement\\transactions\\data\\data",
+    "ScriptLog": "C:\\Users\\istevens\\source\\repos\\PYTHON SCRIPTS\\PythonFileManagement\\Transactions\\scriptLog",
+    "Source": "C:\\Users\\istevens\\source\\repos\\PYTHON SCRIPTS\\PythonFileManagement\\Transactions\\data\\temp",
+    "Destination": "C:\\Users\\istevens\\source\\repos\\PYTHON SCRIPTS\\PythonFileManagement\\Transactions\\data\\data",
     "DisableReportTextFile": "true" 
 }
