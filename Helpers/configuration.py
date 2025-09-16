@@ -21,7 +21,7 @@ from pathlib import Path
 CONST_DIRECTORY_LOCATION = os.path.dirname(os.path.abspath(__file__))
 CONST_PROJECT_DIRECTORY_LOCATION = str(Path(CONST_DIRECTORY_LOCATION).parent)
 
-CONST_CONFIG_FILENAME = f"{CONST_PROJECT_DIRECTORY_LOCATION}/config.json"
+CONST_CONFIG_FILENAME = f"{CONST_DIRECTORY_LOCATION}\\config.json"
 
 # The following refers to the jobs that are going to be processed
 # The jobName is the name of the file that is going to be processed
